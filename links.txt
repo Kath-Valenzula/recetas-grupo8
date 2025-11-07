@@ -1,0 +1,13 @@
+# Enlaces del Proyecto
+
+## Repositorios
+Backend: https://github.com/usuario/sc-s2/demo
+Frontend: https://github.com/usuario/sc-s2/frontend
+
+## Video Demo
+[Pendiente: agregar enlace al video de demostración]
+
+## Documentación Adicional
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- Frontend: http://localhost:8081
+- Postman Collection: Ver /postman/collection.json

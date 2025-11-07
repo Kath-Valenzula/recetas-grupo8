@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inicio | Recetas Pro</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <style>
+      .scroll-carousel {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 1rem;
+      }
+
+      .scroll-carousel::-webkit-scrollbar {
+        height: 8px;
+      }
+      .scroll-carousel::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 10px;
+      }
+
+      .receta-card {
+        flex: 0 0 auto;
+        width: 250px;
+        border-radius: 12px;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .receta-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+
+      .receta-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+      }
+
+      .receta-card-body {
+        padding: 0.8rem 1rem;
+      }
+
+      .list-group-item {
+        transition: background-color 0.2s, transform 0.2s;
+        cursor: pointer;
+      }
+
+      .list-group-item:hover {
+        background-color: #e9f7ef;
+        transform: translateX(5px);
+      }
+    </style>
+  </head>
+
+  <body class="bg-light">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="container mt-4">
+      <!-- Banner principal -->
+      <section class="mb-5">
+        <div
+          id="bannerCarousel"
+          class="carousel slide shadow-sm rounded overflow-hidden"
+          data-bs-ride="carousel"
+        >
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img
+                th:src="@{/img/banner1.png}"
+                class="d-block w-100"
+                alt="Banner 1"
+                style="max-height: 400px; object-fit: cover"
+              />
+            </div>
+            <div class="carousel-item">
+              <img
+                th:src="@{/img/banner2.png}"
+                class="d-block w-100"
+                alt="Banner 2"
+                style="max-height: 400px; object-fit: cover"
+              />
+            </div>
+            <div class="carousel-item">
+              <img
+                th:src="@{/img/banner3.png}"
+                class="d-block w-100"
+                alt="Banner 3"
+                style="max-height: 400px; object-fit: cover"
+              />
+            </div>
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#bannerCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#bannerCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="mb-5">
+        <h2 class="text-success mb-4 border-bottom pb-2">🔥 Recetas populares</h2>
+        <div class="scroll-carousel">
+          <div sec:authorize="isAuthenticated()"
+               th:each="r : ${recetasPopulares}"
+               th:onclick="|window.location.href='/recetas/${r.id}'|"
+               class="receta-card">
+            <img th:src="${r.imagenUrl}" alt="Receta" />
+            <div class="receta-card-body">
+              <h5 th:text="${r.nombre}" class="text-success"></h5>
+              <p th:text="${r.tipoCocina}" class="text-muted mb-2"></p>
+              <p th:text="${r.dificultad}" class="small text-secondary"></p>
+            </div>
+          </div>
+
+          <div sec:authorize="!isAuthenticated()"
+               th:each="r : ${recetasPopulares}"
+               onclick="mostrarModal()"
+               class="receta-card">
+            <img th:src="${r.imagenUrl}" alt="Receta" />
+            <div class="receta-card-body">
+              <h5 th:text="${r.nombre}" class="text-success"></h5>
+              <p th:text="${r.tipoCocina}" class="text-muted mb-2"></p>
+              <p th:text="${r.dificultad}" class="small text-secondary"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-success mb-4 border-bottom pb-2">🕒 Recetas recientes</h2>
+        <ul class="list-group shadow-sm">
+          <li sec:authorize="isAuthenticated()"
+              th:each="r : ${recetasRecientes}"
+              th:onclick="|window.location.href='/recetas/${r.id}'|"
+              class="list-group-item d-flex justify-content-between align-items-center">
+            <span th:text="${r.nombre}"></span>
+            <span class="badge bg-success rounded-pill">Nuevo</span>
+          </li>
+
+          <li sec:authorize="!isAuthenticated()"
+              th:each="r : ${recetasRecientes}"
+              onclick="mostrarModal()"
+              class="list-group-item d-flex justify-content-between align-items-center">
+            <span th:text="${r.nombre}"></span>
+            <span class="badge bg-success rounded-pill">Nuevo</span>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+
+    <div class="modal fade" id="loginModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4">
+          <p class="mb-3">
+            🔒 Debes iniciar sesión para ver los detalles de esta receta.
+          </p>
+          <button
+            class="btn btn-success w-100 mb-2"
+            onclick="window.location.href='/login'"
+          >
+            Iniciar sesión
+          </button>
+          <button
+            class="btn btn-outline-secondary w-100"
+            data-bs-dismiss="modal"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/modal.js}"></script>
+  </body>
+</html>

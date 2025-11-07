@@ -1,0 +1,8 @@
+<configuration>
+  <property name="PATTERN" value="%d{HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"/>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder><pattern>${PATTERN}</pattern></encoder>
+  </appender>
+  <logger name="com.demo.demo.security" level="INFO"/>
+  <root level="INFO"><appender-ref ref="STDOUT"/></root>
+</configuration>

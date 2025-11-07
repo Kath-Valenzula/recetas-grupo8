@@ -1,0 +1,7 @@
+{
+  "info": { "name": "sc-s2 API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/actuator/health" } },
+    { "name": "Recetas públicas", "request": { "method": "GET", "url": "{{baseUrl}}/recetas/public" } }
+  ]
+}

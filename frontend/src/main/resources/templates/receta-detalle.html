@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${nombre}">Receta</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="bg-light">
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 800px;">
+
+      <img th:src="${imagenUrl}" 
+           th:alt="${nombre}" 
+           class="card-img-top rounded-top-4" 
+           style="max-height: 400px; object-fit: cover;">
+
+      <div class="card-body p-5">
+        <h1 class="card-title text-center mb-4" th:text="${nombre}"></h1>
+
+        <div class="d-flex justify-content-center gap-5 mb-4">
+          <p class="mb-0"><strong>Dificultad:</strong> <span th:text="${dificultad}"></span></p>
+          <p class="mb-0"><strong>Tiempo:</strong> <span th:text="${tiempo}"></span></p>
+        </div>
+
+        <h4 class="mt-4 mb-3 text-primary">Ingredientes</h4>
+        <ul class="list-group list-group-flush mb-4">
+          <li class="list-group-item" 
+              th:each="i : ${ingredientes}" 
+              th:text="${i}">
+          </li>
+        </ul>
+
+        <h4 class="mt-4 mb-3 text-primary">Instrucciones</h4>
+        <p class="text-muted" 
+           th:each="i : ${instrucciones}" 
+           th:text="${i}">
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
