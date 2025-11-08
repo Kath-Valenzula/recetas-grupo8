@@ -1,7 +1,9 @@
 package com.demo.demo.models;
 
 import java.util.Collection;
+import java.util.Collections;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Entity;
@@ -12,12 +14,14 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="users",uniqueConstraints = {
-    @UniqueConstraint(name = "UK_USUARIO_EMAIL",columnNames = "EMAIL"),        
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(name = "UK_USUARIO_EMAIL", columnNames = "EMAIL"),
 })
 public class User implements UserDetails {
+  private static final long serialVersionUID = 1L;
+
   @Id
-  @GeneratedValue(strategy=GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   private String username;
@@ -34,6 +38,7 @@ public class User implements UserDetails {
     this.id = id;
   }
 
+  @Override
   public String getUsername() {
     return username;
   }
@@ -50,6 +55,7 @@ public class User implements UserDetails {
     this.email = email;
   }
 
+  @Override
   public String getPassword() {
     return password;
   }
@@ -58,35 +64,28 @@ public class User implements UserDetails {
     this.password = password;
   }
 
-@Override
-public Collection getAuthorities() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
-}
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return Collections.emptyList();
+  }
 
-@Override
-public boolean isAccountNonExpired() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
-}
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-@Override
-public boolean isAccountNonLocked() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
-}
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-@Override
-public boolean isCredentialsNonExpired() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
-}
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-@Override
-public boolean isEnabled() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
-}
-
-
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 }

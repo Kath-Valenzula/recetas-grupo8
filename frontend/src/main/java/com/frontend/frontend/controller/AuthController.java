@@ -3,7 +3,8 @@ package com.frontend.frontend.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,17 +19,20 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 public class AuthController {
 
-    private final String backendUrl = "http://localhost:8080/register";
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
+    private final String backendUrl = "http://localhost:8080/register";
 
     @GetMapping("/login")
     public String login() {
         return "login";
     }
+
     @GetMapping("/register")
     public String register(Model model) {
         return "register";
     }
+
     @PostMapping("/register")
     public String registerUser(
             @RequestParam String username,
@@ -51,8 +55,8 @@ public class AuthController {
 
             model.addAttribute("message", "Usuario registrado correctamente. Ahora puedes iniciar sesión.");
         } catch (Exception ex) {
+            log.error("Error al registrar usuario", ex);
             model.addAttribute("message", "Error al registrar usuario: " + ex.getMessage());
-            System.out.println("Error");
         }
 
         return "register";
