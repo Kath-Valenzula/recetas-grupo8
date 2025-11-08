@@ -3,6 +3,6 @@
 Sube aquí capturas de:
 
 1. Endpoints públicos OK
-2. Login OK
-3. Acceso a protegidos OK
-4. Errores esperados (401/403)
+1. Login OK
+1. Acceso a protegidos OK
+1. Errores esperados (401/403)

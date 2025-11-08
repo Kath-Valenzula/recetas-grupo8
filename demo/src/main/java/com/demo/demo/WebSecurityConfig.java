@@ -1,8 +1,13 @@
 package com.demo.demo;
 
-// Esta clase ha sido deprecada. Por favor utilizar SecurityConfig.java en su lugar.
+/**
+ * Esta clase se mantiene solo por compatibilidad y ya no contiene configuración.
+ * Utiliza {@link com.demo.demo.config.SecurityConfig}.
+ */
 @Deprecated
-public class WebSecurityConfig {
-    // Configuración movida a SecurityConfig.java
-}
+public final class WebSecurityConfig {
+
+    private WebSecurityConfig() {
+        throw new IllegalStateException("SecurityConfig reemplaza esta clase");
+    }
 }
