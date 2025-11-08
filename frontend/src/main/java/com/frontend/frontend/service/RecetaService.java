@@ -1,9 +1,10 @@
 package com.frontend.frontend.service;
 
-import com.frontend.frontend.TokenStore;
-import com.frontend.frontend.model.RecetaDTO;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,9 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import com.frontend.frontend.TokenStore;
+import com.frontend.frontend.model.RecetaDTO;
 
 @Service
 public class RecetaService {
@@ -25,10 +25,11 @@ public class RecetaService {
 
     public RecetaService(TokenStore tokenStore) {
         this.restTemplate = new RestTemplate();
-        this.tokenStore = tokenStore;
+        this.tokenStore = java.util.Objects.requireNonNull(tokenStore, "tokenStore");
     }
 
-    public List<RecetaDTO> buscarRecetas(String nombre, String tipoCocina, String ingredientes, String paisOrigen, String dificultad,Boolean popular) {
+    public List<RecetaDTO> buscarRecetas(String nombre, String tipoCocina, String ingredientes, String paisOrigen,
+            String dificultad, Boolean popular) {
 
         String uri = UriComponentsBuilder.fromHttpUrl(baseUrl + "/buscar")
                 .queryParamIfPresent("nombre", Optional.ofNullable(nombre))
@@ -40,15 +41,15 @@ public class RecetaService {
                 .toUriString();
         RecetaDTO[] recetas = restTemplate.getForObject(uri, RecetaDTO[].class);
 
-        return Arrays.asList(recetas);
+        return recetas != null ? Arrays.asList(recetas) : Collections.emptyList();
     }
 
-    public RecetaDTO findById(Long id){
+    public RecetaDTO findById(Long id) {
         String uri = baseUrl + "/" + id;
         String token = tokenStore.getToken();
 
         if (token == null || token.isEmpty()) {
-            throw new RuntimeException("El usuario no está autenticado o el token no está disponible.");
+            throw new IllegalStateException("El usuario no está autenticado o el token no está disponible.");
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -62,6 +63,10 @@ public class RecetaService {
                 RecetaDTO.class
         );
 
-        return response.getBody();
+        RecetaDTO body = response.getBody();
+        if (body == null) {
+            throw new IllegalStateException("La respuesta del servicio de recetas no contiene datos.");
+        }
+        return body;
     }
 }

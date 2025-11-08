@@ -1,15 +1,13 @@
 package com.demo.demo.controller;
 
-
 import java.util.Map;
+import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.demo.models.User;
@@ -18,20 +16,21 @@ import com.demo.demo.repository.UserRepository;
 @RestController
 public class RegisterController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public RegisterController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository");
+        this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "passwordEncoder");
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User userRequest){
+    public ResponseEntity<Map<String, String>> register(@RequestBody User userRequest) {
         if (userRepository.findByUsername(userRequest.getUsername()) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message","El usuario ya existe"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "El usuario ya existe"));
         }
         userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRepository.save(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","Usuario registrado exitosamente"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Usuario registrado exitosamente"));
     }
-
 }

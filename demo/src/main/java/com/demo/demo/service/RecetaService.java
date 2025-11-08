@@ -1,12 +1,12 @@
 package com.demo.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.demo.demo.models.Receta;
 import com.demo.demo.repository.RecetaRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RecetaService {
@@ -33,19 +33,26 @@ public class RecetaService {
         return recetaRepository.save(receta);
     }
 
-    public List<Receta> buscar(String nombre, String tipoCocina, String ingredientes, String pais, String dificultad,Boolean popular) {
-        if (popular != null)
-        return recetaRepository.findByPopularTrue();
-        if (nombre != null && !nombre.isEmpty())
+    public List<Receta> buscar(String nombre, String tipoCocina, String ingredientes, String pais, String dificultad,
+            Boolean popular) {
+        if (Boolean.TRUE.equals(popular)) {
+            return recetaRepository.findByPopularTrue();
+        }
+        if (nombre != null && !nombre.isEmpty()) {
             return recetaRepository.findByNombreContainingIgnoreCase(nombre);
-        if (tipoCocina != null && !tipoCocina.isEmpty())
+        }
+        if (tipoCocina != null && !tipoCocina.isEmpty()) {
             return recetaRepository.findByTipoCocinaContainingIgnoreCase(tipoCocina);
-        if (ingredientes != null && !ingredientes.isEmpty())
+        }
+        if (ingredientes != null && !ingredientes.isEmpty()) {
             return recetaRepository.findByIngredientesContainingIgnoreCase(ingredientes);
-        if (pais != null && !pais.isEmpty())
+        }
+        if (pais != null && !pais.isEmpty()) {
             return recetaRepository.findByPaisOrigenContainingIgnoreCase(pais);
-        if (dificultad != null && !dificultad.isEmpty())
+        }
+        if (dificultad != null && !dificultad.isEmpty()) {
             return recetaRepository.findByDificultadContainingIgnoreCase(dificultad);
+        }
         return recetaRepository.findAll();
     }
 }
