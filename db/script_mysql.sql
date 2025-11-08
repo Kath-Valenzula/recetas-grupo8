@@ -1,5 +1,7 @@
--- Script de creación de base de datos y tablas
-CREATE DATABASE IF NOT EXISTS mydatabase;
+-- Script de creación de base de datos y tablas (entrega Semana 3)
+CREATE DATABASE IF NOT EXISTS mydatabase
+  CHARACTER SET utf8mb4 
+  COLLATE utf8mb4_unicode_ci;
 USE mydatabase;
 
 -- Usuarios
