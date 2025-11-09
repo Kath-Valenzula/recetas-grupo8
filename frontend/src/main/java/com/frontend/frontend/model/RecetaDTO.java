@@ -1,24 +1,21 @@
 package com.frontend.frontend.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+import java.util.Objects;
 
+// FIX: Minimal DTO required by frontend services/controllers to avoid raw map usage warnings.
 public class RecetaDTO {
-
     private Long id;
     private String nombre;
-    private String tipoCocina;
-    private String ingredientes;
-    private String paisOrigen;
-    private String dificultad;
-
-    @JsonProperty("tiempoCoccion")
-    private Integer tiempoPreparacion;
-
+    private String descripcion;
     private String instrucciones;
+    private Integer tiempoPreparacion;
+    private String dificultad;
     private String imagenUrl;
     private Boolean popular;
-
-    // Getters y Setters
+    private List<String> ingredientes;
+    private String categoria;
+    private Boolean vegana;
 
     public Long getId() {
         return id;
@@ -36,36 +33,20 @@ public class RecetaDTO {
         this.nombre = nombre;
     }
 
-    public String getTipoCocina() {
-        return tipoCocina;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setTipoCocina(String tipoCocina) {
-        this.tipoCocina = tipoCocina;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public String getIngredientes() {
-        return ingredientes;
+    public String getInstrucciones() {
+        return instrucciones;
     }
 
-    public void setIngredientes(String ingredientes) {
-        this.ingredientes = ingredientes;
-    }
-
-    public String getPaisOrigen() {
-        return paisOrigen;
-    }
-
-    public void setPaisOrigen(String paisOrigen) {
-        this.paisOrigen = paisOrigen;
-    }
-
-    public String getDificultad() {
-        return dificultad;
-    }
-
-    public void setDificultad(String dificultad) {
-        this.dificultad = dificultad;
+    public void setInstrucciones(String instrucciones) {
+        this.instrucciones = instrucciones;
     }
 
     public Integer getTiempoPreparacion() {
@@ -76,12 +57,12 @@ public class RecetaDTO {
         this.tiempoPreparacion = tiempoPreparacion;
     }
 
-    public String getInstrucciones() {
-        return instrucciones;
+    public String getDificultad() {
+        return dificultad;
     }
 
-    public void setInstrucciones(String instrucciones) {
-        this.instrucciones = instrucciones;
+    public void setDificultad(String dificultad) {
+        this.dificultad = dificultad;
     }
 
     public String getImagenUrl() {
@@ -100,8 +81,44 @@ public class RecetaDTO {
         this.popular = popular;
     }
 
+    public List<String> getIngredientes() {
+        return ingredientes;
+    }
+
+    public void setIngredientes(List<String> ingredientes) {
+        this.ingredientes = ingredientes;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public Boolean getVegana() {
+        return vegana;
+    }
+
+    public void setVegana(Boolean vegana) {
+        this.vegana = vegana;
+    }
+
     @Override
-    public String toString() {
-        return nombre + " - " + tiempoPreparacion + " min";
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RecetaDTO recetaDTO = (RecetaDTO) o;
+        return Objects.equals(id, recetaDTO.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

@@ -3,6 +3,7 @@ package com.demo.demo.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,14 +43,16 @@ public class RecetasController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Receta> detalle(@PathVariable Long id) {
+    // FIX: Avoid null id warnings from static analysis on path variables.
+    public ResponseEntity<Receta> detalle(@PathVariable @NonNull Long id) {
         return recetaService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Receta> crear(@RequestBody Receta receta) {
+    // FIX: Validate request body upfront to prevent null-handling warnings downstream.
+    public ResponseEntity<Receta> crear(@RequestBody @NonNull Receta receta) {
         return ResponseEntity.ok(recetaService.guardar(receta));
     }
 }

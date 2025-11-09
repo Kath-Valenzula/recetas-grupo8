@@ -2,6 +2,7 @@ package com.frontend.frontend.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,9 +53,12 @@ public class AuthController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
-            restTemplate.exchange(backendUrl, HttpMethod.POST, entity, String.class);
+            String methodStr = HttpMethod.POST.name();
+            HttpMethod method = safeMethod(methodStr);
+            // FIX: Ensure HttpMethod resolution is null-safe to satisfy static analysis.
+            restTemplate.exchange(backendUrl, method, entity, String.class);
 
-            model.addAttribute("message", "Usuario registrado correctamente. Ahora puedes iniciar sesión.");
+            model.addAttribute("message", "Usuario registrado correctamente. Ahora puedes iniciar sesion.");
         } catch (Exception ex) {
             log.error("Error al registrar usuario", ex);
             model.addAttribute("message", "Error al registrar usuario: " + ex.getMessage());
@@ -61,4 +66,16 @@ public class AuthController {
 
         return "register";
     }
+
+    private static @NonNull HttpMethod safeMethod(@NonNull String methodStr) {
+        // FIX: Current Spring version lacks HttpMethod.resolve; emulate it via valueOf with null guard.
+        HttpMethod resolved;
+        try {
+            resolved = HttpMethod.valueOf(methodStr);
+        } catch (IllegalArgumentException ex) {
+            resolved = null;
+        }
+        return Objects.requireNonNull(resolved, "HttpMethod invalido: " + methodStr);
+    }
 }
+

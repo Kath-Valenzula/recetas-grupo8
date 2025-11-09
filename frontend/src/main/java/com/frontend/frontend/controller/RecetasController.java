@@ -1,7 +1,10 @@
 package com.frontend.frontend.controller;
 
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,8 +41,15 @@ public String detalleReceta(@PathVariable Long id, Model model) {
     RecetaDTO receta = recetaService.findById(id);
     
     model.addAttribute("nombre", receta.getNombre());
-    model.addAttribute("ingredientes", receta.getIngredientes().split(",\\s*")); // convertir string en lista
-    model.addAttribute("instrucciones", receta.getInstrucciones().split("\\;\\s*")); // separar por puntos si quieres pasos
+    List<String> ingredientes = Objects.requireNonNullElse(receta.getIngredientes(), Collections.emptyList());
+    model.addAttribute("ingredientes", ingredientes);
+    String instrucciones = receta.getInstrucciones();
+    List<String> pasos = instrucciones == null || instrucciones.isBlank()
+            ? Collections.emptyList()
+            : Arrays.stream(instrucciones.split("\\;\\s*"))
+                    .filter(segment -> !segment.isBlank())
+                    .toList();
+    model.addAttribute("instrucciones", pasos);
     model.addAttribute("tiempo", receta.getTiempoPreparacion() + " minutos");
     model.addAttribute("dificultad", receta.getDificultad());
     model.addAttribute("imagenUrl", receta.getImagenUrl());

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -78,8 +77,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider)
-            throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
             .headers(headers -> headers
@@ -116,12 +114,11 @@ public class SecurityConfig {
                 .permitAll())
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(true)
-                .sessionRegistry(sessionRegistry())
-                .and()
-                .sessionFixation(fixation -> fixation.migrateSession()))
-            .authenticationProvider(authenticationProvider);
+                .sessionFixation(fixation -> fixation.migrateSession())
+                .sessionConcurrency(concurrency -> concurrency
+                    .maximumSessions(1)
+                    .maxSessionsPreventsLogin(true)
+                    .sessionRegistry(sessionRegistry())));
 
         return http.build();
     }
@@ -139,15 +136,6 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userDetailsService);
-        return provider;
     }
 
     @Bean

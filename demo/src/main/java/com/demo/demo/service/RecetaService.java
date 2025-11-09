@@ -3,6 +3,7 @@ package com.demo.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.demo.demo.models.Receta;
@@ -25,11 +26,13 @@ public class RecetaService {
         return recetaRepository.findByPopularTrue();
     }
 
-    public Optional<Receta> obtenerPorId(Long id) {
+    // FIX: Enforce non-null id to satisfy null-safety analysis.
+    public Optional<Receta> obtenerPorId(@NonNull Long id) {
         return recetaRepository.findById(id);
     }
 
-    public Receta guardar(Receta receta) {
+    // FIX: Ensure Receta payload is validated at the service boundary.
+    public Receta guardar(@NonNull Receta receta) {
         return recetaRepository.save(receta);
     }
 

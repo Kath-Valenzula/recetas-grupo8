@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.demo.demo.JWTAuthenticationConfig;
+import com.demo.demo.JWTTokenService;
 
 @RestController
 public class LoginController {
 
-    private final JWTAuthenticationConfig jwtAuthtenticationConfig;
+    private final JWTTokenService jwtAuthtenticationConfig;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    public LoginController(JWTAuthenticationConfig jwtAuthtenticationConfig,
+    public LoginController(JWTTokenService jwtAuthtenticationConfig,
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
         this.jwtAuthtenticationConfig = Objects.requireNonNull(jwtAuthtenticationConfig, "jwtAuthtenticationConfig");

@@ -2,6 +2,7 @@ package com.frontend.frontend;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +45,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         try {
             final var responseEntity = restTemplate.postForEntity("http://localhost:8080/login", requestBody, String.class);
-            if (responseEntity.getStatusCode() != HttpStatus.OK || responseEntity.getBody() == null) {
-                throw new BadCredentialsException("Respuesta inesperada del servicio de autenticación");
+            if (responseEntity.getStatusCode() != HttpStatus.OK) {
+                throw new BadCredentialsException("Respuesta inesperada del servicio de autenticacion");
             }
-            token = responseEntity.getBody().replace("{\"token\":\"", "").replace("\"}", "");
+            // FIX: Shield against null response bodies from backend auth endpoint.
+            String responseBody = Optional.ofNullable(responseEntity.getBody())
+                    .orElseThrow(() -> new IllegalStateException("Respuesta sin cuerpo"));
+            token = responseBody.replace("{\"token\":\"", "").replace("\"}", "");
         } catch (HttpClientErrorException.Unauthorized ex) {
-            throw new BadCredentialsException("Usuario o contraseña incorrectos", ex);
+            throw new BadCredentialsException("Usuario o contrasena incorrectos", ex);
         } catch (Exception ex) {
             log.error("Error al autenticar contra el backend", ex);
             throw new BadCredentialsException("Error al autenticar: " + ex.getMessage(), ex);
@@ -67,3 +71,4 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
+

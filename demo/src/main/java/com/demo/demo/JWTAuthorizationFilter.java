@@ -1,10 +1,14 @@
 package com.demo.demo;
 
-import java.io.IOException;
+import static com.demo.demo.Constants.BEARER_PREFIX;
+import static com.demo.demo.Constants.HEADER_AUTHORIZATION;
+import static com.demo.demo.Constants.SUPER_SECRET_KEY;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,24 +21,21 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import static com.demo.demo.Constants.*;
-
-import javax.crypto.SecretKey;
+import com.demo.demo.security.JWTAuthenticationConfig;
 
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+        // FIX: Use shared constants to avoid mismatched header/prefix strings.
         private Claims setSigningKey(HttpServletRequest request) {
             String jwtToken = Objects.requireNonNull(request.getHeader(HEADER_AUTHORIZATION))
                     .replace(BEARER_PREFIX, "");
 
             return Jwts.parser()
-                    .verifyWith((SecretKey) getSigningKey(SUPER_SECRET_KEY))
+                    .verifyWith(JWTAuthenticationConfig.getSigningKey(SUPER_SECRET_KEY))
                     .build()
                     .parseSignedClaims(jwtToken)
                     .getPayload();
@@ -67,8 +68,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
 
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-                throws ServletException, IOException {
+        // FIX: Align with Jakarta types and non-null contract to silence servlet warnings.
+        protected void doFilterInternal(
+                @NonNull jakarta.servlet.http.HttpServletRequest request,
+                @NonNull jakarta.servlet.http.HttpServletResponse response,
+                @NonNull jakarta.servlet.FilterChain filterChain)
+                throws jakarta.servlet.ServletException, java.io.IOException {
             try {
                 if (isJWTValid(request)) {
                     Claims claims = setSigningKey(request);
